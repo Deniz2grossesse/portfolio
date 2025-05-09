@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="UTF-8">
+    <title>Nouvelle Demande DIN</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #1A1A1A;
+        color: #fff;
+        padding: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input, select {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: none;
+      }
+      button {
+        background-color: #FF4B00;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #FF8E00;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Créer une Nouvelle Demande</h1>
+    <form id="requestForm">
+      <div class="form-group">
+        <label for="requestor">Requestor/Customer</label>
+        <input type="text" id="requestor" name="requestor" required>
+      </div>
+      <div class="form-group">
+        <label for="dinPortfolio">DIN Portfolio</label>
+        <input type="text" id="dinPortfolio" name="dinPortfolio" required>
+      </div>
+      <div class="form-group">
+        <label for="dinFocalPoint">DIN Focal Point</label>
+        <input type="text" id="dinFocalPoint" name="dinFocalPoint" required>
+      </div>
+      <button type="submit">Soumettre la Demande</button>
+    </form>
+    <script>
+      document.getElementById('requestForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = {
+          requestor: document.getElementById('requestor').value,
+          dinPortfolio: document.getElementById('dinPortfolio').value,
+          dinFocalPoint: document.getElementById('dinFocalPoint').value
+        };
+        google.script.run.withSuccessHandler(function(response) {
+          alert('Demande soumise avec succès ! ID: ' + response);
+          document.getElementById('requestForm').reset();
+        }).submitRequest(data);
+      });
+    </script>
+  </body>
+</html>
