@@ -1,58 +1,116 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <base target="_top">
-    <meta charset="UTF-8">
-    <title>Nouvelle Demande DIN</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #1A1A1A;
-        color: #fff;
-        padding: 20px;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      label {
-        display: block;
-        margin-bottom: 5px;
-      }
-      input, select {
-        width: 100%;
-        padding: 8px;
-        border-radius: 5px;
-        border: none;
-      }
-      button {
-        background-color: #FF4B00;
-        color: #fff;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #FF8E00;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Créer une Nouvelle Demande</h1>
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>DIN Portfolio Management</title>
+  <style>
+    /* === RESET ET STYLES DE BASE === */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background-color: #f7f8fa;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* === CONTAINER === */
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 26px;
+      margin-bottom: 20px;
+      color: #444;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    label {
+      font-size: 14px;
+      margin-bottom: 5px;
+      display: block;
+      color: #666;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    input:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+    /* === BUTTON === */
+    button {
+      background-color: #007bff;
+      color: #fff;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+      box-shadow: 0 4px 12px rgba(0, 91, 179, 0.3);
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      margin-top: 20px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DIN Portfolio Management</h1>
     <form id="requestForm">
       <div class="form-group">
         <label for="requestor">Requestor/Customer</label>
-        <input type="text" id="requestor" name="requestor" required>
+        <input type="text" id="requestor" placeholder="Enter requestor" required>
       </div>
       <div class="form-group">
         <label for="dinPortfolio">DIN Portfolio</label>
-        <input type="text" id="dinPortfolio" name="dinPortfolio" required>
+        <input type="text" id="dinPortfolio" placeholder="Enter portfolio" required>
       </div>
       <div class="form-group">
         <label for="dinFocalPoint">DIN Focal Point</label>
-        <input type="text" id="dinFocalPoint" name="dinFocalPoint" required>
+        <input type="text" id="dinFocalPoint" placeholder="Enter focal point" required>
       </div>
-      <button type="submit">Soumettre la Demande</button>
+      <button type="submit">Submit Request</button>
+      <div class="message" id="message"></div>
     </form>
     <script>
       document.getElementById('requestForm').addEventListener('submit', function(e) {
@@ -63,10 +121,12 @@
           dinFocalPoint: document.getElementById('dinFocalPoint').value
         };
         google.script.run.withSuccessHandler(function(response) {
-          alert('Demande soumise avec succès ! ID: ' + response);
+          document.getElementById('message').innerText = 'Request submitted! ID: ' + response;
           document.getElementById('requestForm').reset();
         }).submitRequest(data);
       });
     </script>
-  </body>
+  </div>
+</body>
 </html>
+
