@@ -10,65 +10,58 @@ const SPREADSHEET_ID = '10QxgzOtwTq3zAcuV8YQxtIJd7dzwAgvADq1QaiFp30E';
 // Adresse email de destination pour les notifications
 const EMAIL_DESTINATION = "votre_email@exemple.com";
 
-// Adresse(s) CC pour les notifications
-const EMAIL_CC = "cc1@example.com, cc2@example.com"; // Ajoute ici les emails séparés par une virgule
+// Adresse(s) CC pour les notifications (séparées par des virgules)
+const EMAIL_CC = "cc1@example.com, cc2@example.com"; 
 
 // Lien vers l'application pour les mises à jour
 const UPDATE_LINK = "https://votre-lien-application.com";
 
 /**
+ * Fonction exécutée à l'ouverture de l'application web
+ * @return {HtmlOutput} - Page HTML générée
+ */
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('Index')
+    .setTitle('Portfolio Management Dashboard')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/**
  * Sauvegarde les données simplifiées et envoie un email
  * @param {Object} data - Données à sauvegarder (version simplifiée)
- * @return {Boolean} - True si sauvegarde réussie, False sinon
+ * @return {Object} - Succès ou échec avec ID
  */
 function saveSimpleRequest(data) {
   try {
-    // Accès au fichier Google Sheets spécifié par l'ID
     var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = spreadsheet.getActiveSheet();
 
-    // Vérifier que la feuille est bien accessible
     if (!sheet) throw new Error("Feuille introuvable ou inaccessible");
 
-    // Récupérer toutes les valeurs de la colonne A à partir de la ligne 4
     var idValues = sheet.getRange("A4:A").getValues();
+    var nonEmptyIds = idValues.filter(row => row[0] !== "");
 
-    // Filtrer pour ne garder que les cellules non vides
-    var nonEmptyIds = idValues.filter(function(row) {
-      return row[0] !== "";
-    });
-
-    // Calculer le nouvel ID (en prenant le maximum existant)
     var newId = 1;
     if (nonEmptyIds.length > 0) {
       var lastId = parseInt(nonEmptyIds[nonEmptyIds.length - 1][0], 10);
-      if (!isNaN(lastId)) {
-        newId = lastId + 1;
-      }
+      if (!isNaN(lastId)) newId = lastId + 1;
     }
 
-    // Calcul de la prochaine ligne vide (à partir de la ligne 4)
     var nextRow = nonEmptyIds.length + 4;
-
-    // Préparation des données à insérer
     var rowData = [
       newId,
       data.requestor || "",
       data.dinPortfolio || "",
       data.dinFocalPoint || "",
-      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "" // Champs vides
+      "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""
     ];
 
-    // Écrire les données dans la feuille à partir de la ligne 4
     var range = sheet.getRange(nextRow, 1, 1, rowData.length);
     range.setValues([rowData]);
 
-    // Envoyer l'email de notification
     var success = sendNotificationEmail(newId, data);
 
-    // Journal de succès
     Logger.log("Données sauvegardées avec succès pour l'ID " + newId);
-
     return { success: true, id: newId };
   } catch (error) {
     Logger.log("Erreur lors de la sauvegarde des données: " + error.toString());
@@ -84,10 +77,7 @@ function saveSimpleRequest(data) {
  */
 function sendNotificationEmail(id, data) {
   try {
-    // Construction de l'objet de l'email
     var subject = "NEW request " + id + " created for DIN Portfolio management";
-    
-    // Construction du corps de l'email
     var body = "Dear users,\n\n" +
       "A new request is now created as ID " + id + ". " +
       "You can find below information linked to it.\n\n" +
@@ -97,14 +87,11 @@ function sendNotificationEmail(id, data) {
       "Please click on this [link](" + UPDATE_LINK + ") to show the updates.\n\n" +
       "Thanks & Regards.";
 
-    // Options d'email avec CC
     var emailOptions = {
       cc: EMAIL_CC
     };
 
-    // Envoi de l'email avec CC
     GmailApp.sendEmail(EMAIL_DESTINATION, subject, body, emailOptions);
-
     Logger.log("Email envoyé avec succès à " + EMAIL_DESTINATION + " avec CC : " + EMAIL_CC);
     return true;
   } catch (error) {
