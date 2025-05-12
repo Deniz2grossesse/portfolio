@@ -94,4 +94,21 @@ function sendNotificationEmail(id, data) {
       "Requestor/customer: " + data.requestor + "\n" +
       "DIN portfolio: " + data.dinPortfolio + "\n" +
       "DIN focal point: " + data.dinFocalPoint + "\n\n" +
-      "Please click on this [link]()
+      "Please click on this [link](" + UPDATE_LINK + ") to show the updates.\n\n" +
+      "Thanks & Regards.";
+
+    // Options d'email avec CC
+    var emailOptions = {
+      cc: EMAIL_CC
+    };
+
+    // Envoi de l'email avec CC
+    GmailApp.sendEmail(EMAIL_DESTINATION, subject, body, emailOptions);
+
+    Logger.log("Email envoyé avec succès à " + EMAIL_DESTINATION + " avec CC : " + EMAIL_CC);
+    return true;
+  } catch (error) {
+    Logger.log("Erreur lors de l'envoi de l'email: " + error.toString());
+    return false;
+  }
+}
